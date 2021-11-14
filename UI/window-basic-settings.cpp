@@ -3495,6 +3495,14 @@ void OBSBasicSettings::SaveOutputSettings()
 			       vodTrack[3], vodTrack[4], vodTrack[5]);
 	}
 
+	if (vod2TrackCheckbox) {
+		SaveCheckBox(simpleVod2Track, "SimpleOutput", "Vod2TrackEnabled");
+		SaveCheckBox(vod2TrackCheckbox, "AdvOut", "Vod2TrackEnabled");
+		SaveTrackIndex(main->Config(), "AdvOut", "Vod2TrackIndex",
+			       vod2Track[0], vod2Track[1], vod2Track[2],
+			       vod2Track[3], vod2Track[4], vod2Track[5]);
+	}
+
 	SaveCheckBox(ui->advReplayBuf, "AdvOut", "RecRB");
 	SaveSpinBox(ui->advRBSecMax, "AdvOut", "RecRBTime");
 	SaveSpinBox(ui->advRBMegsMax, "AdvOut", "RecRBSize");
