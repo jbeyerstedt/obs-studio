@@ -160,10 +160,14 @@ private:
 	uint32_t outputCY = 0;
 
 	QPointer<QCheckBox> simpleVodTrack;
+	QPointer<QCheckBox> simpleVod2Track;
 
 	QPointer<QCheckBox> vodTrackCheckbox;
 	QPointer<QWidget> vodTrackContainer;
 	QPointer<QRadioButton> vodTrack[MAX_AUDIO_MIXES];
+	QPointer<QCheckBox> vod2TrackCheckbox;
+	QPointer<QWidget> vod2TrackContainer;
+	QPointer<QRadioButton> vod2Track[MAX_AUDIO_MIXES];
 
 	QIcon hotkeyConflictIcon;
 
@@ -256,6 +260,7 @@ private slots:
 	void UpdateServerList();
 	void UpdateKeyLink();
 	void UpdateVodTrackSetting();
+	void UpdateVod2TrackSetting();
 	void UpdateServiceRecommendations();
 	void RecreateOutputResolutionWidget();
 	void UpdateResFPSLimits();

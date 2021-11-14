@@ -83,6 +83,8 @@ void OBSBasicSettings::InitStreamPage()
 	connect(ui->service, SIGNAL(currentIndexChanged(int)), this,
 		SLOT(UpdateKeyLink()));
 	connect(ui->service, SIGNAL(currentIndexChanged(int)), this,
+		SLOT(UpdateVod2TrackSetting()));
+	connect(ui->service, SIGNAL(currentIndexChanged(int)), this,
 		SLOT(UpdateVodTrackSetting()));
 	connect(ui->service, SIGNAL(currentIndexChanged(int)), this,
 		SLOT(UpdateServiceRecommendations()));
@@ -161,6 +163,7 @@ void OBSBasicSettings::LoadStream1Settings()
 
 	UpdateKeyLink();
 	UpdateMoreInfoLink();
+	UpdateVod2TrackSetting();
 	UpdateVodTrackSetting();
 	UpdateServiceRecommendations();
 
@@ -700,13 +703,8 @@ void OBSBasicSettings::on_useAuth_toggled()
 
 void OBSBasicSettings::UpdateVodTrackSetting()
 {
-	bool enableForCustomServer = config_get_bool(
-		GetGlobalConfig(), "General", "EnableCustomServerVodTrack");
-	bool enableVodTrack = ui->service->currentText() == "Twitch";
+	bool enableVodTrack = true;
 	bool wasEnabled = !!vodTrackCheckbox;
-
-	if (enableForCustomServer && IsCustomService())
-		enableVodTrack = true;
 
 	if (enableVodTrack == wasEnabled)
 		return;
@@ -781,6 +779,87 @@ void OBSBasicSettings::UpdateVodTrackSetting()
 		config_get_int(main->Config(), "AdvOut", "VodTrackIndex");
 	for (int i = 0; i < MAX_AUDIO_MIXES; i++) {
 		vodTrack[i]->setChecked((i + 1) == trackIndex);
+	}
+}
+
+void OBSBasicSettings::UpdateVod2TrackSetting()
+{
+	bool enableVod2Track = true;
+	bool wasEnabled = !!vod2TrackCheckbox;
+
+	if (enableVod2Track == wasEnabled)
+		return;
+
+	if (!enableVod2Track) {
+		delete vod2TrackCheckbox;
+		delete vod2TrackContainer;
+		delete simpleVod2Track;
+		return;
+	}
+
+	/* -------------------------------------- */
+	/* simple output mode vod track widgets   */
+
+	bool simpleAdv = ui->simpleOutAdvanced->isChecked();
+	bool vod2TrackEnabled = config_get_bool(main->Config(), "SimpleOutput",
+					       "Vod2TrackEnabled");
+
+	simpleVod2Track = new QCheckBox(this);
+	simpleVod2Track->setText(
+		QTStr("Basic.Settings.Output.Simple.TwitchVod2Track"));
+	simpleVod2Track->setVisible(simpleAdv);
+	simpleVod2Track->setChecked(vod2TrackEnabled);
+
+	int pos;
+	ui->simpleStreamingLayout->getWidgetPosition(ui->simpleOutAdvanced,
+						     &pos, nullptr);
+	ui->simpleStreamingLayout->insertRow(pos + 1, nullptr, simpleVod2Track);
+
+	HookWidget(simpleVod2Track, SIGNAL(clicked(bool)),
+		   SLOT(OutputsChanged()));
+	connect(ui->simpleOutAdvanced, SIGNAL(toggled(bool)),
+		simpleVod2Track.data(), SLOT(setVisible(bool)));
+
+	/* -------------------------------------- */
+	/* advanced output mode vod track widgets */
+
+	vod2TrackCheckbox = new QCheckBox(this);
+	vod2TrackCheckbox->setText(
+		QTStr("Basic.Settings.Output.Adv.TwitchVod2Track"));
+	vod2TrackCheckbox->setLayoutDirection(Qt::RightToLeft);
+
+	vod2TrackContainer = new QWidget(this);
+	QHBoxLayout *vod2TrackLayout = new QHBoxLayout();
+	for (int i = 0; i < MAX_AUDIO_MIXES; i++) {
+		vod2Track[i] = new QRadioButton(QString::number(i + 1));
+		vod2TrackLayout->addWidget(vod2Track[i]);
+
+		HookWidget(vod2Track[i], SIGNAL(clicked(bool)),
+			   SLOT(OutputsChanged()));
+	}
+
+	HookWidget(vod2TrackCheckbox, SIGNAL(clicked(bool)),
+		   SLOT(OutputsChanged()));
+
+	vod2TrackLayout->addStretch();
+	vod2TrackLayout->setContentsMargins(0, 0, 0, 0);
+
+	vod2TrackContainer->setLayout(vod2TrackLayout);
+
+	ui->advOutTopLayout->insertRow(2, vod2TrackCheckbox, vod2TrackContainer);
+
+	vod2TrackEnabled =
+		config_get_bool(main->Config(), "AdvOut", "Vod2TrackEnabled");
+	vod2TrackCheckbox->setChecked(vod2TrackEnabled);
+	vod2TrackContainer->setEnabled(vod2TrackEnabled);
+
+	connect(vod2TrackCheckbox, SIGNAL(clicked(bool)), vod2TrackContainer,
+		SLOT(setEnabled(bool)));
+
+	int trackIndex =
+		config_get_int(main->Config(), "AdvOut", "Vod2TrackIndex");
+	for (int i = 0; i < MAX_AUDIO_MIXES; i++) {
+		vod2Track[i]->setChecked((i + 1) == trackIndex);
 	}
 }
 

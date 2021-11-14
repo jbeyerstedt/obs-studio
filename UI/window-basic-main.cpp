@@ -1380,6 +1380,7 @@ bool OBSBasic::InitBasicConfigDefaults()
 	config_set_default_bool(basicConfig, "AdvOut", "UseRescale", false);
 	config_set_default_uint(basicConfig, "AdvOut", "TrackIndex", 1);
 	config_set_default_uint(basicConfig, "AdvOut", "VodTrackIndex", 2);
+	config_set_default_uint(basicConfig, "AdvOut", "Vod2TrackIndex", 3);
 	config_set_default_string(basicConfig, "AdvOut", "Encoder", "obs_x264");
 
 	config_set_default_string(basicConfig, "AdvOut", "RecType", "Standard");
