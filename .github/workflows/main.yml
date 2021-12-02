@@ -5,14 +5,14 @@ on:
     paths-ignore:
       - '**.md'
     branches:
-      - master
+      - potato
     tags:
       - '*'
   pull_request:
     paths-ignore:
       - '**.md'
     branches:
-      - master
+      - potato
 
 env:
   MACOS_CEF_BUILD_VERSION: '4183'
