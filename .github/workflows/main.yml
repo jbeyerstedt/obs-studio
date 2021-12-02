@@ -6,6 +6,8 @@ on:
       - '**.md'
     branches:
       - master
+      - potato
+      - feature/*
     tags:
       - '*'
   pull_request:
@@ -13,6 +15,8 @@ on:
       - '**.md'
     branches:
       - master
+      - potato
+      - feature/*
 
 env:
   MACOS_CEF_BUILD_VERSION: '4183'
